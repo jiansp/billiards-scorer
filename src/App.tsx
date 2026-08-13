@@ -36,7 +36,7 @@ interface SavedState {
 export default function App() {
   const [phase, setPhase] = useState<'setup' | 'game'>('setup')
   const [count, setCount] = useState<2 | 3>(3)
-  const [names, setNames] = useState<string[]>(['玩家1', '玩家2', '玩家3'])
+  const [names, setNames] = useState<string[]>(['他爹', '他大爷', '玩家3'])
   const [initial, setInitial] = useState(100)
   const [rules, setRules] = useState<Rules>(DEFAULT_RULES)
 
