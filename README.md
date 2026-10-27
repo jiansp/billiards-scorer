@@ -21,13 +21,33 @@
 | 黑金 | 清台母球落袋 | 本家赔上下家各 10（共 -20） |
 | 犯规 | 失误/犯规 | 本家给上家 1 分，下家获自由球 |
 
-## 运行
+## 在线地址
+
+**https://jiansp.github.io/billiards-scorer/**
+
+## 部署：GitHub Pages（自动）
+
+本仓库已配置 GitHub Actions 工作流 `.github/workflows/deploy.yml`：
+向 `main` 分支推送后会自动 `npm ci && npm run build` 并把 `dist/` 发布到 Pages。
+
+首次部署需在仓库 **Settings → Pages → Source** 选 **GitHub Actions**（工作流里的 `enablement: true` 会自动创建站点）。
+
+日常更新只需：
+
+```bash
+git add .
+git commit -m "说明"
+git push
+```
+
+推送后在仓库 **Actions** 标签查看进度，两条 job（build / deploy）全绿即发布完成，约 1–2 分钟。
+
+## 本地运行
 ```bash
 npm install
 npm run dev      # 本地开发，终端会给出局域网地址，手机同一 WiFi 可访问
-npm run build    # 产出 dist/ 静态文件，可托管到任意静态空间
+npm run build    # 产出 dist/ 静态文件
 npm run preview  # 预览构建产物
 ```
 
-构建后的 `dist/` 直接丢到任意静态托管（或 GitHub Pages / 对象存储）即可用手机访问；
-也可通过 `npm run dev -- --host` 在同 WiFi 下用手机打开调试。
+`vite.config.ts` 中 `base: './'`，构建产物使用相对路径，放在任意静态托管（含 Pages 子路径）都能正常加载。

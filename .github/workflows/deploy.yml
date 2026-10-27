@@ -35,8 +35,12 @@ jobs:
       - name: Build
         run: npm run build
 
+      # enablement: 首次部署时 Pages 站点尚未创建，
+      # configure-pages 会因 GET 站点 404 而失败，此参数让它自动创建
       - name: Setup Pages
         uses: actions/configure-pages@v5
+        with:
+          enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
