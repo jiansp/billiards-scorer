@@ -31,6 +31,7 @@ interface SavedState {
   scores: number[]
   shooter: number
   history: HistoryEntry[]
+  fouls?: number[]
 }
 
 export default function App() {
@@ -43,6 +44,7 @@ export default function App() {
   const [scores, setScores] = useState<number[]>([])
   const [shooter, setShooter] = useState(0)
   const [history, setHistory] = useState<HistoryEntry[]>([])
+  const [fouls, setFouls] = useState<number[]>([0, 0, 0])
 
   const [toast, setToast] = useState<string | null>(null)
   const [showSettings, setShowSettings] = useState(false)
@@ -64,6 +66,9 @@ export default function App() {
         setScores(d.scores)
         setShooter(d.shooter ?? 0)
         setHistory(d.history ?? [])
+        setFouls(
+          d.fouls && d.fouls.length === d.count ? d.fouls : d.scores.map(() => 0)
+        )
         setPhase('game')
       }
     } catch {
@@ -83,6 +88,7 @@ export default function App() {
         scores,
         shooter,
         history,
+        fouls,
       }
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data))
     } catch {
@@ -109,6 +115,7 @@ export default function App() {
     setScores(ns.map(() => initial))
     setShooter(0)
     setHistory([])
+    setFouls(ns.map(() => 0))
     setPhase('game')
   }
 
@@ -116,6 +123,7 @@ export default function App() {
     setScores(activeNames.map(() => initial))
     setShooter(0)
     setHistory([])
+    setFouls(activeNames.map(() => 0))
   }
 
   const exitToSetup = () => {
@@ -135,6 +143,7 @@ export default function App() {
     setScores(after)
     setHistory((h) => [...h, { event, shooter, before, after }])
     if (event === 'fanGui') {
+      setFouls((f) => f.map((v, i) => (i === shooter ? v + 1 : v)))
       setToast(`${activeNames[down]} 获得自由球`)
     }
   }
@@ -160,13 +169,14 @@ export default function App() {
   }
 
   const undo = () => {
-    setHistory((h) => {
-      if (h.length === 0) return h
-      const last = h[h.length - 1]
-      setScores(last.before)
-      setShooter(last.shooter)
-      return h.slice(0, -1)
-    })
+    if (history.length === 0) return
+    const last = history[history.length - 1]
+    setScores(last.before)
+    setShooter(last.shooter)
+    if (last.event === 'fanGui') {
+      setFouls((f) => f.map((v, i) => (i === last.shooter ? v - 1 : v)))
+    }
+    setHistory((h) => h.slice(0, -1))
   }
 
   const bankrupt = scores.findIndex((s) => s <= 0)
@@ -337,6 +347,7 @@ export default function App() {
                 {isShooter && <span className="role-badge">本家</span>}
                 <span className="player-name">{name}</span>
                 <span className="player-score">{scores[i]}</span>
+                <span className="player-fouls">犯规 {fouls[i] ?? 0} 次</span>
                 <span className="set-shooter">点此设为当前</span>
               </button>
             )
