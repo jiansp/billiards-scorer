@@ -48,6 +48,7 @@ export default function App() {
   const [showSettings, setShowSettings] = useState(false)
   const [showHistory, setShowHistory] = useState(false)
   const [pendingEvent, setPendingEvent] = useState<EventType | null>(null)
+  const [moonReader, setMoonReader] = useState(false)
 
   // 启动时恢复存档
   useEffect(() => {
@@ -346,6 +347,10 @@ export default function App() {
           当前本家：<b>{activeNames[shooter]}</b>（点任意卡片可切换）
         </p>
 
+        <button className="moonread-btn" onClick={() => setMoonReader(true)}>
+          无 限 月 读
+        </button>
+
         <div className="event-grid">
           {EVENT_ORDER.map((ev) => (
             <button
@@ -475,6 +480,36 @@ export default function App() {
           </div>
         </div>
       )}
+      {moonReader && (
+        <div className="moonread-mask" onClick={() => setMoonReader(false)}>
+          <div className="moonread-inner" onClick={(e) => e.stopPropagation()}>
+            <div className="red-moon" />
+            <svg className="sharingan" viewBox="0 0 200 200" aria-hidden="true">
+              <circle cx="100" cy="100" r="96" fill="#f4f1ee" stroke="#0c0c0c" strokeWidth="4" />
+              <circle cx="100" cy="100" r="80" fill="#b51d23" />
+              <g>
+                <animateTransform attributeName="transform" type="rotate" from="0 100 100" to="360 100 100" dur="7s" repeatCount="indefinite" />
+                <g transform="rotate(0 100 100) translate(100 44)">
+                  <circle cx="0" cy="0" r="13" fill="#0a0a0a" />
+                  <path d="M0,-13 C11,-13 16,-2 12,9 C8,3 3,1 0,0 Z" fill="#0a0a0a" />
+                </g>
+                <g transform="rotate(120 100 100) translate(100 44)">
+                  <circle cx="0" cy="0" r="13" fill="#0a0a0a" />
+                  <path d="M0,-13 C11,-13 16,-2 12,9 C8,3 3,1 0,0 Z" fill="#0a0a0a" />
+                </g>
+                <g transform="rotate(240 100 100) translate(100 44)">
+                  <circle cx="0" cy="0" r="13" fill="#0a0a0a" />
+                  <path d="M0,-13 C11,-13 16,-2 12,9 C8,3 3,1 0,0 Z" fill="#0a0a0a" />
+                </g>
+              </g>
+              <circle cx="100" cy="100" r="25" fill="#080808" />
+            </svg>
+            <div className="moonread-title">无限月读</div>
+            <div className="moonread-sub">点击任意处解除幻术</div>
+          </div>
+        </div>
+      )}
+
     </div>
   )
 }
