@@ -51,6 +51,7 @@ export default function App() {
   const [showHistory, setShowHistory] = useState(false)
   const [pendingEvent, setPendingEvent] = useState<EventType | null>(null)
   const [moonReader, setMoonReader] = useState(false)
+  const [ballSetter, setBallSetter] = useState<number | null>(null)
 
   // 启动时恢复存档
   useEffect(() => {
@@ -116,6 +117,7 @@ export default function App() {
     setShooter(0)
     setHistory([])
     setFouls(ns.map(() => 0))
+    setBallSetter(null)
     setPhase('game')
   }
 
@@ -124,6 +126,7 @@ export default function App() {
     setShooter(0)
     setHistory([])
     setFouls(activeNames.map(() => 0))
+    setBallSetter(null)
   }
 
   const exitToSetup = () => {
@@ -146,6 +149,13 @@ export default function App() {
       setFouls((f) => f.map((v, i) => (i === shooter ? v + 1 : v)))
       setToast(`${activeNames[down]} 获得自由球`)
     }
+  }
+
+  // 三人局：随机指定一人去摆球
+  const randomBallSetter = () => {
+    const i = Math.floor(Math.random() * count)
+    setBallSetter(i)
+    setToast(`🎱 本次随机摆球：${activeNames[i]}`)
   }
 
   const handleEvent = (event: EventType) => {
@@ -348,6 +358,9 @@ export default function App() {
                 <span className="player-name">{name}</span>
                 <span className="player-score">{scores[i]}</span>
                 <span className="player-fouls">犯规 {fouls[i] ?? 0} 次</span>
+                {i === ballSetter && (
+                  <span className="player-balls">🎱 本次摆球</span>
+                )}
                 <span className="set-shooter">点此设为当前</span>
               </button>
             )
@@ -361,6 +374,12 @@ export default function App() {
         <button className="moonread-btn" onClick={() => setMoonReader(true)}>
           无 限 月 读
         </button>
+
+        {count === 3 && (
+          <button className="ball-btn" onClick={randomBallSetter}>
+            🎱 随机摆球
+          </button>
+        )}
 
         <div className="event-grid">
           {EVENT_ORDER.map((ev) => (
